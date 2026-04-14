@@ -533,21 +533,20 @@ body {
 
 .receipt-card {
   background: var(--white);
-  padding: 40px 24px 60px;
+  padding: 10px 24px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  flex: 1;
   width: 100%;
-  align-self: stretch;
+  align-self: center;
 
   /* Mask: arches anchored to x=0 so the wave starts right at the card edge */
   --mask:
     /* 1. Top Wave: Arches — tile origin at -20px so arch centre sits on x=0 */
-    radial-gradient(11px at 50% 16px, #000 99%, #0000 101%) -20px 0/40px 20px repeat-x,
+    radial-gradient(10px at 50% 15px, #000 99%, #0000 101%) -20px 0/40px 50px repeat-x,
     /* 2. Top Wave: Bites — offset by one half-tile (20px) to fall between arches */
-    radial-gradient(12px at 50% -6px, #0000 99%, #000 101%) 0 10px/40px 20px repeat-x,
+    radial-gradient(14px at 50% -8px, #0000 99%, #000 101%) 0 10px/40px 20px repeat-x,
 
     /* 3. Bottom Wave: Arches */
     radial-gradient(11px at 50% calc(100% - 16px), #000 99%, #0000 101%) -20px 100%/40px 20px repeat-x,
@@ -583,7 +582,7 @@ body {
   }
 
   .receipt-card {
-    padding: 24px 16px 48px;
+    padding: 24px 16px 24px;
   }
 
   .receipt-logo {
@@ -635,6 +634,7 @@ body {
   }
 
   .card-footer-divider {
+    margin-top: 14px;
     margin-bottom: 10px;
   }
 
@@ -650,7 +650,7 @@ body {
 /* ── Very small phones (≤ 360px) — further scale down ── */
 @media (max-width: 360px) {
   .receipt-card {
-    padding: 18px 12px 44px;
+    padding: 18px 12px 24px;
   }
 
   .amount-text {
@@ -683,26 +683,26 @@ body {
   width: 120px;
   height: auto;
   object-fit: contain;
-  margin: 10px 0 6px;
+  margin: 0px 0 6px;
 }
 
 .success-text {
-  font-size: 16px;
-  color: #555;
-  font-weight: 400;
-  margin: 16px 0 14px;
+  font-size: 20px;
+  color: #000000;
+  font-weight: 600;
+  margin: 2px 0 6px;
 }
 
 .amount-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 54px;
 }
 
 .amount-text {
   font-size: 44px;
-  font-weight: 800;
+  font-weight: 900;
   color: #111;
   letter-spacing: -1px;
   line-height: 1;
@@ -731,7 +731,7 @@ body {
 
 .party-name {
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 800;
   color: #1a1a1a;
   margin-bottom: 5px;
 }
@@ -756,15 +756,16 @@ body {
 }
 
 .bank-text-receipt {
-  font-size: 13px;
-  color: #1a1a1a;
+  font-size: 14px;
+  color: #000000;
+  font-weight: 500;
 }
 
 .paid-row {
   display: flex;
   align-items: center;
   width: 100%;
-  margin: 12px 0;
+  margin: 32px 0;
   gap: 8px;
 }
 
@@ -779,21 +780,30 @@ body {
   color: #555;
   white-space: nowrap;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rocket-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
 }
 
 .ref-text {
-  font-size: 11px;
-  color: #aaa;
+  font-size: 14px;
+  color: #9e9494;
   text-align: center;
   margin-top: 10px;
 }
 
 .card-footer-divider {
   width: 100%;
-  height: 1px;
-  background: #ebebeb;
-  margin-top: auto; /* pins footer to the bottom of the stretched card */
-  margin-bottom: 14px;
+  height: 0;
+  background: transparent;
+  margin-top: 10px;
+  margin-bottom: 8px;
 }
 
 .card-footer {
@@ -831,7 +841,7 @@ body {
 }
 
 .upi-logo {
-  width: 80px;
+  width: 40px;
   height: 40px;
   object-fit: contain;
 }

@@ -89,7 +89,7 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
               alt="Paytm"
             />
 
-            <p className="success-text">Payment Successful</p>
+            <h4 className="success-text">Payment Successful</h4>
 
             <div className="amount-row">
               <span className="amount-text">₹{formatINR(amount)}</span>
@@ -100,7 +100,7 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
               />
             </div>
 
-            <div className="hairline" />
+           
 
             {/* To */}
             <div className="party-block">
@@ -124,7 +124,7 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
             {/* Paid row */}
             <div className="paid-row">
               <div className="dotted-line" />
-              <span className="paid-text">🚀 Paid in {paidInSeconds} Seconds</span>
+              <span className="paid-text"><img src="/assets/rocket.png" className="rocket-icon" alt="" />Paid in {paidInSeconds} Seconds</span>
               <div className="dotted-line" />
             </div>
 
