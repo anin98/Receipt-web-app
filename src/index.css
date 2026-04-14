@@ -1,0 +1,1806 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg-light: #E1F3FF;
+  --cyan: #01b9f3;
+  --dark-blue: #052a7b;
+  --teal: #006686;
+  --white: #fff;
+  --fafafa: #fafafa;
+  --dark-text: #1a1a1a;
+  --gray: #888;
+  --light-gray: #c0c0c0;
+  --error: #e74c3c;
+  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --btn-shadow: 0 4px 10px rgba(5, 42, 123, 0.35);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+}
+
+/* ============================================================
+   FORM SCREEN
+============================================================ */
+
+#form-screen {
+  background: var(--bg-light);
+  min-height: 100dvh;
+  padding: 16px 20px 48px;
+}
+
+@media (min-width: 600px) {
+  #form-screen {
+    padding-left: max(20px, calc((100% - 480px) / 2));
+    padding-right: max(20px, calc((100% - 480px) / 2));
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-logo {
+  width: 110px;
+  height: 68px;
+  object-fit: contain;
+}
+
+.header-sub {
+  font-size: 20px;
+  color: var(--teal);
+  font-weight: 600;
+  margin-top: -4px;
+  letter-spacing: 0.4px;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--card-shadow);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.section-icon {
+  font-size: 13px;
+  color: var(--dark-blue);
+  line-height: 1;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dark-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--teal);
+  font-weight: 500;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  display: block;
+}
+
+.card .label:first-of-type {
+  margin-top: 0;
+}
+
+.input {
+  width: 100%;
+  border: 1.5px solid #000;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--dark-text);
+  background: var(--fafafa);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  display: block;
+}
+
+.input::placeholder {
+  color: var(--light-gray);
+}
+
+.input:focus {
+  border-color: var(--dark-blue);
+}
+
+.input.error {
+  border-color: var(--error);
+}
+
+/* Remove number input arrows */
+.input[type='number']::-webkit-outer-spin-button,
+.input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 3px;
+  margin-bottom: 2px;
+  display: block;
+}
+
+/* Bank Selector */
+.bank-selector {
+  width: 100%;
+  border: 1.5px solid #000;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--fafafa);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.bank-selector.error {
+  border-color: var(--error);
+}
+
+.bank-selector:active {
+  opacity: 0.75;
+}
+
+.bank-logo-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.bank-selector-text {
+  font-size: 15px;
+  color: var(--dark-text);
+  font-weight: 500;
+  flex: 1;
+}
+
+.bank-selector-placeholder {
+  font-size: 15px;
+  color: var(--light-gray);
+  flex: 1;
+}
+
+.bank-digits-badge {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.bank-selector-arrow {
+  font-size: 18px;
+  color: var(--gray);
+  margin-left: auto;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Date Time Row */
+.date-time-row {
+  display: flex;
+  gap: 10px;
+}
+
+.date-time-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid #000;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--fafafa);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.picker-btn-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.picker-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark-text);
+  min-width: 0;
+  flex: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Advanced Toggle */
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 0 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+
+.advanced-toggle-text {
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.advanced-toggle-icon {
+  font-size: 16px;
+  color: var(--teal);
+  line-height: 1;
+}
+
+.hint-text {
+  font-size: 11px;
+  color: var(--teal);
+  margin-top: 8px;
+  display: block;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  background: var(--dark-blue);
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  margin-top: 8px;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  min-height: 54px;
+}
+
+.submit-btn:hover {
+  opacity: 0.92;
+}
+
+.submit-btn:active {
+  opacity: 0.82;
+}
+
+.submit-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.submit-btn-icon {
+  font-size: 18px;
+  color: #fff;
+  line-height: 1;
+}
+
+.submit-btn-text {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Spinner */
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   BANK MODAL
+============================================================ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-sheet {
+  background: var(--white);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 0 20px 32px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 72vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.modal-overlay.visible .modal-sheet {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark-blue);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--dark-blue);
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+  font-family: inherit;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.modal-close:hover {
+  background: #f0f0f0;
+}
+
+.bank-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.bank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.bank-row:hover {
+  background: #f5f5f5;
+}
+
+.bank-row.selected {
+  background: #EEF4FF;
+}
+
+.bank-logo-list {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.bank-row-text {
+  font-size: 14px;
+  color: var(--dark-text);
+  font-weight: 500;
+  flex: 1;
+}
+
+.bank-check {
+  font-size: 16px;
+  color: var(--dark-blue);
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.bank-separator {
+  height: 1px;
+  background: #f0f0f0;
+  margin: 0 4px;
+}
+
+/* ============================================================
+   RECEIPT SCREEN
+============================================================ */
+
+#receipt-screen {
+  height: 100dvh;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--cyan) 50%,
+    var(--dark-blue) 50%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Full-screen flex column: card fills available space, buttons sit at bottom */
+.receipt-fullscreen-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 480px;
+  padding: 20px 20px 24px 20px;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Card area grows to fill space; scrolls only when content overflows */
+.receipt-card-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: receiptIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Hide scrollbar so it never shifts the card left (overlay only) */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+}
+.receipt-card-area::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / WebKit */
+}
+
+@keyframes receiptIn {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.receipt-card {
+  background: var(--white);
+  padding: 40px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  width: 100%;
+  align-self: stretch;
+
+  /* Mask: arches anchored to x=0 so the wave starts right at the card edge */
+  --mask:
+    /* 1. Top Wave: Arches — tile origin at -20px so arch centre sits on x=0 */
+    radial-gradient(11px at 50% 16px, #000 99%, #0000 101%) -20px 0/40px 20px repeat-x,
+    /* 2. Top Wave: Bites — offset by one half-tile (20px) to fall between arches */
+    radial-gradient(12px at 50% -6px, #0000 99%, #000 101%) 0 10px/40px 20px repeat-x,
+
+    /* 3. Bottom Wave: Arches */
+    radial-gradient(11px at 50% calc(100% - 16px), #000 99%, #0000 101%) -20px 100%/40px 20px repeat-x,
+    /* 4. Bottom Wave: Bites */
+    radial-gradient(12px at 50% calc(100% + 6px), #0000 99%, #000 101%) 0 calc(100% - 10px)/40px 20px repeat-x,
+
+    /* 5. Solid Body */
+    linear-gradient(#000, #000) 0 20px/100% calc(100% - 40px) no-repeat;
+
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+/* Action buttons row at the bottom */
+.receipt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  flex-shrink: 0;
+}
+
+/* On desktop, add vertical breathing room */
+@media (min-width: 600px) {
+  .receipt-fullscreen-layout {
+    padding: 32px 0 32px;
+  }
+}
+
+/* ── Mobile: compact everything so the card fits without scrolling ── */
+@media (max-width: 400px) {
+  .receipt-fullscreen-layout {
+    padding: 12px 16px 16px 16px;
+  }
+
+  .receipt-card {
+    padding: 24px 16px 48px;
+  }
+
+  .receipt-logo {
+    width: 90px;
+    margin: 6px 0 4px;
+  }
+
+  .success-text {
+    font-size: 14px;
+    margin: 10px 0 10px;
+  }
+
+  .amount-text {
+    font-size: clamp(26px, 9vw, 40px);
+  }
+
+  .success-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .amount-row {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .hairline {
+    margin-bottom: 12px;
+  }
+
+  .party-block {
+    margin-bottom: 6px;
+  }
+
+  .party-name {
+    font-size: 15px;
+  }
+
+  .paid-row {
+    margin: 8px 0;
+  }
+
+  .ref-text {
+    word-break: break-all;
+    white-space: normal;
+    font-size: 10px;
+    margin-top: 8px;
+    padding: 0 4px;
+  }
+
+  .card-footer-divider {
+    margin-bottom: 10px;
+  }
+
+  .action-btn {
+    padding: 12px;
+  }
+
+  .action-btn-text {
+    font-size: 14px;
+  }
+}
+
+/* ── Very small phones (≤ 360px) — further scale down ── */
+@media (max-width: 360px) {
+  .receipt-card {
+    padding: 18px 12px 44px;
+  }
+
+  .amount-text {
+    font-size: clamp(22px, 8vw, 34px);
+  }
+
+  .party-name {
+    font-size: 14px;
+  }
+
+  .bank-text-receipt {
+    font-size: 12px;
+  }
+
+  .receipt-actions {
+    gap: 8px;
+    padding-top: 10px;
+  }
+}
+
+/* Scallop pseudo-elements replaced by mask on .receipt-card */
+.receipt-card::before,
+.receipt-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Receipt content */
+.receipt-logo {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  margin: 10px 0 6px;
+}
+
+.success-text {
+  font-size: 16px;
+  color: #555;
+  font-weight: 400;
+  margin: 16px 0 14px;
+}
+
+.amount-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.amount-text {
+  font-size: 44px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.hairline {
+  width: 100%;
+  height: 1px;
+  background: #ebebeb;
+  margin-bottom: 18px;
+}
+
+.party-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.party-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 5px;
+}
+
+.to-from-label {
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.bank-row-receipt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bank-logo-receipt {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.bank-text-receipt {
+  font-size: 13px;
+  color: #1a1a1a;
+}
+
+.paid-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 12px 0;
+  gap: 8px;
+}
+
+.dotted-line {
+  flex: 1;
+  height: 0;
+  border-top: 1.5px dashed #ccc;
+}
+
+.paid-text {
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ref-text {
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.card-footer-divider {
+  width: 100%;
+  height: 1px;
+  background: #ebebeb;
+  margin-top: auto; /* pins footer to the bottom of the stretched card */
+  margin-bottom: 14px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.footer-logo {
+  width: 56px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.footer-divider {
+  width: 1px;
+  height: 22px;
+  background: #ddd;
+}
+
+.upi-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.powered-by {
+  font-size: 7px;
+  color: #aaa;
+  letter-spacing: 0.3px;
+  text-align: right;
+  line-height: 1.3;
+  white-space: pre-line;
+}
+
+.upi-logo {
+  width: 80px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.hdfc-logo {
+  width: 72px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* Action Buttons */
+.action-btn {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.action-btn:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.action-btn:active {
+  opacity: 0.75;
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.action-btn-text {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.action-btn-icon-inline {
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Download button — slightly distinct */
+.download-btn {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+}
+
+.download-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* ============================================================
+   FORM — TOGGLE & PHONEPE HEADER
+============================================================ */
+
+.toggle-row {
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  gap: 4px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #888;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.toggle-btn.active {
+  background: #052a7b;
+  color: #fff;
+}
+
+.toggle-btn:not(.active):hover {
+  background: #f0f0f0;
+}
+
+.phonepe-logo-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(95, 37, 159, 0.25);
+  margin-bottom: 2px;
+}
+
+.phonepe-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+/* PhonePe tinted submit button */
+.submit-btn.phonepe {
+  background: #5F259F;
+  box-shadow: 0 4px 10px rgba(95, 37, 159, 0.4);
+}
+
+/* ============================================================
+   PHONEPE RECEIPT SCREEN
+============================================================ */
+
+#phonepe-screen {
+  height: 100dvh;
+  position: fixed;
+  inset: 0;
+  background: #0D0D0D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Full-screen flex column matching Paytm layout pattern */
+.pp-fullscreen-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 480px;
+  padding: 0 20px 24px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 600px) {
+  .pp-fullscreen-layout {
+    padding: 0 0 32px;
+  }
+}
+
+/* Scrollable content area */
+.pp-content-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.pp-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: receiptIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Header */
+.pp-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-top: 28px;
+}
+
+.pp-logo-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(95, 37, 159, 0.4);
+}
+
+.pp-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.pp-header-text {
+  flex: 1;
+}
+
+.pp-success-title {
+  font-size: 17px;
+  font-weight: 400;
+  color: #AEAEB2;
+  margin-bottom: 3px;
+}
+
+.pp-timestamp {
+  font-size: 12px;
+  color: #8E8E93;
+}
+
+/* Main Card */
+.pp-card {
+  width: 100%;
+  background: #1C1C1E;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.pp-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+/* Paid to row */
+.pp-paid-to-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 0;
+}
+
+.pp-bank-logo-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #2C2C2E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+.pp-bank-logo-img {
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
+  object-fit: contain;
+}
+
+.pp-paid-to-info {
+  flex: 1;
+}
+
+.pp-recipient-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.pp-masked-acct {
+  font-size: 12px;
+  color: #8E8E93;
+  margin-bottom: 2px;
+}
+
+.pp-bank-name {
+  font-size: 12px;
+  color: #8E8E93;
+}
+
+.pp-amount-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.pp-divider {
+  height: 1px;
+  background: #2C2C2E;
+  margin: 2px 0;
+}
+
+/* Banking Name */
+.pp-banking-name-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+}
+
+.pp-banking-name-label {
+  font-size: 13px;
+  color: #8E8E93;
+  flex: 1;
+}
+
+.pp-banking-name-value {
+  display: flex;
+  align-items: center;
+  flex: 2;
+  gap: 4px;
+}
+
+.pp-colon {
+  font-size: 13px;
+  color: #8E8E93;
+}
+
+.pp-banking-name-text {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.pp-verified-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #34C759;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Transfer Details */
+.pp-transfer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
+
+.pp-transfer-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pp-details-icon-box {
+  width: 24px;
+  height: 32px;
+  border-radius: 8px;
+ 
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pp-details-icon-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+
+.pp-transfer-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.pp-chevron {
+  font-size: 16px;
+  color: #8E8E93;
+  line-height: 1;
+}
+
+/* Details body */
+.pp-details-body {
+  padding-bottom: 4px;
+}
+
+.pp-detail-label {
+  font-size: 12px;
+  color: #8E8E93;
+  margin-bottom: 4px;
+}
+
+.pp-detail-value {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.pp-debited-row {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  gap: 0;
+}
+
+.pp-debit-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.pp-debit-bank-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.pp-debit-info {
+  flex: 1;
+}
+
+.pp-debit-acct {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.pp-debit-utr {
+  font-size: 11px;
+  color: #8E8E93;
+}
+
+.pp-debit-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* Powered by */
+.pp-powered-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0;
+}
+
+.pp-powered-text {
+  font-size: 11px;
+  color: #8E8E93;
+}
+
+.pp-upi-logo {
+  width: 44px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.pp-yes-logo {
+  width: 48px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Action buttons */
+.pp-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  flex-shrink: 0;
+}
+
+.pp-action-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.pp-action-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.pp-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Download button — slightly brighter border */
+.pp-download-btn {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.pp-download-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.pp-action-text {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 380px) {
+  .amount-text {
+    font-size: 36px;
+  }
+
+  .header-sub {
+    font-size: 18px;
+  }
+
+  .card-footer {
+    gap: 6px;
+  }
+
+  .footer-logo {
+    width: 44px;
+  }
+
+  .upi-logo {
+    width: 60px;
+  }
+
+  .hdfc-logo {
+    width: 56px;
+  }
+}
+
+/* ============================================================
+   NAVI RECEIPT SCREEN
+============================================================ */
+
+#navi-screen {
+  min-height: 100dvh;
+  background: #33043F;
+  display: flex;
+  justify-content: center;
+}
+
+.navi-fullscreen-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  padding: 0 0 24px;
+  box-sizing: border-box;
+}
+
+.navi-content-area {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.navi-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: receiptIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Purple top */
+.navi-top {
+  background: #33043F;
+  padding: 36px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.navi-paid-securely {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 14px;
+  opacity: 0.95;
+}
+
+.navi-brand-logo {
+  height: 40px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.navi-win-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.navi-coin-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.navi-win-text {
+  font-weight: 500;
+}
+
+.navi-win-amt {
+  font-weight: 700;
+}
+
+/* Receipt card */
+.navi-card {
+  background: #fff;
+  border-radius: 16px;
+  margin: 0 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.navi-card-top {
+  padding: 28px 24px 24px;
+  text-align: center;
+}
+
+.navi-success-label {
+  font-size: 15px;
+  color: #7A7A7A;
+  margin-bottom: 14px;
+}
+
+.navi-recipient {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0F0F0F;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+.navi-upi-id {
+  font-size: 13px;
+  color: #8A8A8A;
+  margin-bottom: 26px;
+  word-break: break-all;
+  letter-spacing: 0.2px;
+}
+
+.navi-amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.navi-amount {
+  font-size: 40px;
+  font-weight: 700;
+  color: #0F0F0F;
+  letter-spacing: -0.5px;
+}
+
+.navi-check {
+  display: inline-flex;
+  align-items: center;
+}
+
+.navi-upi-badge {
+  display: inline-block;
+  padding: 8px 22px;
+  border: 1px solid #D8D8D8;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F1F1F;
+  background: #fff;
+}
+
+/* Tear divider */
+.navi-tear {
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.navi-tear-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #33043F;
+  flex-shrink: 0;
+}
+
+.navi-tear-left {
+  margin-left: -14px;
+}
+
+.navi-tear-right {
+  margin-right: -14px;
+}
+
+.navi-tear-dash {
+  flex: 1;
+  height: 0;
+  border-top: 2px dashed #D0D0D0;
+  margin: 0 6px;
+}
+
+.navi-card-bottom {
+  padding: 22px 24px 30px;
+  text-align: center;
+}
+
+.navi-timestamp {
+  font-size: 14px;
+  color: #8A8A8A;
+  margin-bottom: 16px;
+}
+
+.navi-from {
+  font-size: 19px;
+  font-weight: 700;
+  color: #0F0F0F;
+  margin-bottom: 14px;
+}
+
+.navi-bank-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.navi-bank-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.navi-bank-icon-fallback {
+  font-size: 18px;
+}
+
+.navi-bank-text {
+  font-size: 15px;
+  color: #2A2A2A;
+  font-weight: 500;
+}
+
+.navi-txn-id {
+  font-size: 14px;
+  color: #6A6A6A;
+}
+
+/* Actions */
+.navi-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 20px 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.navi-action-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.navi-action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.navi-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.navi-download-btn {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.navi-download-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.navi-action-text {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   BANK PORTAL RECEIPT (Single Entry Payment Summary)
+============================================================ */
+
+#bankportal-screen {
+  min-height: 100dvh;
+  background: #F3F3F3;
+  padding: 24px 16px 48px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.bp-layout {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bp-page {
+  background: #fff;
+  padding: 24px 28px 32px;
+  border: 1px solid #E3E3E3;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.bp-bankinfo-logo {
+  height: 26px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+.bp-title {
+  font-size: 26px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  letter-spacing: 0.2px;
+}
+
+.bp-success-bar {
+  background: #EAF0C3;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  justify-content: center;
+}
+
+.bp-success-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.bp-success-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.bp-details {
+  padding: 4px 20px 0 40px;
+}
+
+.bp-row {
+  display: flex;
+  padding: 9px 0;
+  font-size: 15px;
+}
+
+.bp-label {
+  width: 260px;
+  color: #2a2a2a;
+  font-weight: 700;
+}
+
+.bp-value {
+  color: #2a2a2a;
+}
+
+.bp-link {
+  color: #2F7ED8;
+  font-weight: 400;
+}
+
+.bp-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 4px 0 0;
+}
+
+.bp-action-btn {
+  background: #fff;
+  border: 1px solid #C8C8C8;
+  border-radius: 4px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.bp-action-btn:hover {
+  background: #F3F3F3;
+}
+
+.bp-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.bp-download-btn {
+  background: #2F7ED8;
+  border-color: #2F7ED8;
+  color: #fff;
+}
+
+.bp-download-btn:hover {
+  background: #276ab8;
+}
+
+@media (max-width: 600px) {
+  .bp-title { font-size: 20px; }
+  .bp-details { padding: 4px 0 0; }
+  .bp-row { flex-direction: column; gap: 2px; padding: 8px 0; }
+  .bp-label { width: auto; }
+}
