@@ -52,6 +52,7 @@ export default function BankPortalReceipt({ data, onNewTransaction }) {
   const recipientBankInfo = getBankById(recipientBank?.id);
 
   const [downloading, setDownloading] = useState(false);
+  const [downloadingPng, setDownloadingPng] = useState(false);
   const cardRef = useRef(null);
 
   const refId = buildRefId(txnId);
@@ -64,34 +65,39 @@ export default function BankPortalReceipt({ data, onNewTransaction }) {
     maximumFractionDigits: 2,
   });
 
-  const handleDownloadPDF = async () => {
-    if (!cardRef.current || downloading) return;
-    setDownloading(true);
+  const renderCanvas = async () => {
+    const offscreen = document.createElement('div');
+    Object.assign(offscreen.style, {
+      position: 'fixed',
+      left: '-9999px',
+      top: '0',
+      width: '900px',
+      background: '#fff',
+      padding: '24px',
+      boxSizing: 'border-box',
+    });
+
+    const clone = cardRef.current.cloneNode(true);
+    offscreen.appendChild(clone);
+    document.body.appendChild(offscreen);
+
     try {
-      const offscreen = document.createElement('div');
-      Object.assign(offscreen.style, {
-        position: 'fixed',
-        left: '-9999px',
-        top: '0',
-        width: '900px',
-        background: '#fff',
-        padding: '24px',
-        boxSizing: 'border-box',
-      });
-
-      const clone = cardRef.current.cloneNode(true);
-      offscreen.appendChild(clone);
-      document.body.appendChild(offscreen);
-
-      const canvas = await html2canvas(offscreen, {
+      return await html2canvas(offscreen, {
         scale: 3,
         useCORS: true,
         backgroundColor: '#fff',
         logging: false,
       });
-
+    } finally {
       document.body.removeChild(offscreen);
+    }
+  };
 
+  const handleDownloadPDF = async () => {
+    if (!cardRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const canvas = await renderCanvas();
       const pdfW = 842;
       const pdfH = (canvas.height / canvas.width) * pdfW;
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: [pdfW, pdfH] });
@@ -101,6 +107,22 @@ export default function BankPortalReceipt({ data, onNewTransaction }) {
       console.error('PDF generation failed', err);
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadPNG = async () => {
+    if (!cardRef.current || downloadingPng) return;
+    setDownloadingPng(true);
+    try {
+      const canvas = await renderCanvas();
+      const link = document.createElement('a');
+      link.download = `payment-summary-${refId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('PNG generation failed', err);
+    } finally {
+      setDownloadingPng(false);
     }
   };
 
@@ -164,6 +186,13 @@ export default function BankPortalReceipt({ data, onNewTransaction }) {
             disabled={downloading}
           >
             {downloading ? 'Generating PDF…' : '⬇  Download as PDF'}
+          </button>
+          <button
+            className="bp-action-btn bp-download-btn"
+            onClick={handleDownloadPNG}
+            disabled={downloadingPng}
+          >
+            {downloadingPng ? 'Generating PNG…' : '⬇  Download as PNG'}
           </button>
           <button className="bp-action-btn" onClick={onNewTransaction}>
             New Transaction

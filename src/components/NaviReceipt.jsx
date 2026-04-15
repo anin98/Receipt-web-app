@@ -30,6 +30,7 @@ export default function NaviReceipt({ data, onNewTransaction }) {
   const senderBankInfo = getBankById(senderBank?.id);
 
   const [downloading, setDownloading] = useState(false);
+  const [downloadingPng, setDownloadingPng] = useState(false);
   const wrapperRef = useRef(null);
 
   const upiId = naviUpiId;
@@ -43,52 +44,67 @@ export default function NaviReceipt({ data, onNewTransaction }) {
     }
   }, []);
 
-  const handleDownloadPDF = async () => {
-    if (!wrapperRef.current || downloading) return;
-    setDownloading(true);
+  const renderCanvas = async () => {
+    const offscreen = document.createElement('div');
+    Object.assign(offscreen.style, {
+      position: 'fixed',
+      left: '-9999px',
+      top: '0',
+      width: '390px',
+      background: '#33043F',
+      padding: '0',
+      boxSizing: 'border-box',
+    });
+
+    const clone = wrapperRef.current.cloneNode(true);
+    clone.style.animation = 'none';
+    clone.style.paddingBottom = '40px';
+
+    offscreen.appendChild(clone);
+    document.body.appendChild(offscreen);
+
     try {
-      const offscreen = document.createElement('div');
-      Object.assign(offscreen.style, {
-        position: 'fixed',
-        left: '-9999px',
-        top: '0',
-        width: '390px',
-        background: '#33043F',
-        padding: '0',
-        boxSizing: 'border-box',
-      });
-
-      const clone = wrapperRef.current.cloneNode(true);
-      clone.style.animation = 'none';
-      clone.style.paddingBottom = '40px';
-
-      offscreen.appendChild(clone);
-      document.body.appendChild(offscreen);
-
-      const canvas = await html2canvas(offscreen, {
+      return await html2canvas(offscreen, {
         scale: 3,
         useCORS: true,
         backgroundColor: '#33043F',
         logging: false,
       });
-
+    } finally {
       document.body.removeChild(offscreen);
+    }
+  };
 
+  const handleDownloadPDF = async () => {
+    if (!wrapperRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const canvas = await renderCanvas();
       const pdfW = 595.28;
       const pdfH = (canvas.height / canvas.width) * pdfW;
-
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: [pdfW, pdfH],
-      });
-
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [pdfW, pdfH] });
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
       pdf.save(`navi-receipt-${txnId}.pdf`);
     } catch (err) {
       console.error('PDF generation failed', err);
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadPNG = async () => {
+    if (!wrapperRef.current || downloadingPng) return;
+    setDownloadingPng(true);
+    try {
+      const canvas = await renderCanvas();
+      const link = document.createElement('a');
+      link.download = `navi-receipt-${txnId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('PNG generation failed', err);
+    } finally {
+      setDownloadingPng(false);
     }
   };
 
@@ -171,6 +187,21 @@ export default function NaviReceipt({ data, onNewTransaction }) {
               <>
                 <span className="action-btn-icon-inline">⬇</span>
                 <span className="navi-action-text">Download as PDF</span>
+              </>
+            )}
+          </button>
+
+          <button
+            className="navi-action-btn navi-download-btn"
+            onClick={handleDownloadPNG}
+            disabled={downloadingPng}
+          >
+            {downloadingPng ? (
+              <span className="navi-action-text">Generating PNG…</span>
+            ) : (
+              <>
+                <span className="action-btn-icon-inline">⬇</span>
+                <span className="navi-action-text">Download as PNG</span>
               </>
             )}
           </button>

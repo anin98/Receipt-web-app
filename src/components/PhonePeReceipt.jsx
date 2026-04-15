@@ -37,6 +37,7 @@ export default function PhonePeReceipt({ data, onNewTransaction }) {
 
   const [detailsExpanded, setDetailsExpanded] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingPng, setDownloadingPng] = useState(false);
   const wrapperRef = useRef(null);
   const cardRef = useRef(null);
 
@@ -52,74 +53,85 @@ export default function PhonePeReceipt({ data, onNewTransaction }) {
     }
   }, []);
 
-  const handleDownloadPDF = async () => {
-    if (!wrapperRef.current || downloading) return;
-    setDownloading(true);
-    try {
-      const offscreen = document.createElement('div');
-      Object.assign(offscreen.style, {
-        position: 'fixed',
-        left: '-9999px',
-        top: '0',
-        width: '390px',
-        background: '#0D0D0D',
-        padding: '20px',
-        boxSizing: 'border-box',
-      });
+  const renderCanvas = async () => {
+    const offscreen = document.createElement('div');
+    Object.assign(offscreen.style, {
+      position: 'fixed',
+      left: '-9999px',
+      top: '0',
+      width: '390px',
+      background: '#0D0D0D',
+      padding: '20px',
+      boxSizing: 'border-box',
+    });
 
-      const clone = wrapperRef.current.cloneNode(true);
-      clone.style.animation = 'none';
-      clone.style.background = '#0D0D0D';
+    const clone = wrapperRef.current.cloneNode(true);
+    clone.style.animation = 'none';
+    clone.style.background = '#0D0D0D';
 
-      // Force dark background on any element that is transparent so
-      // html2canvas doesn't composite against the white body background
-      clone.querySelectorAll('*').forEach(el => {
-        const computed = window.getComputedStyle(el).backgroundColor;
-        if (computed === 'rgba(0, 0, 0, 0)' || computed === 'transparent') {
-          el.style.backgroundColor = '#0D0D0D';
-        }
-      });
-
-      // Restore elements that have their own explicit dark backgrounds
-      const card = clone.querySelector('.pp-card');
-      if (card) card.style.backgroundColor = '#1C1C1E';
-      const bankCircles = clone.querySelectorAll('.pp-bank-logo-circle, .pp-debit-icon-box');
-      bankCircles.forEach(el => { el.style.backgroundColor = '#2C2C2E'; });
-
-      // Logo circle: keep white bg but strip shadow (renders as harsh glow in html2canvas)
-      const logoCircle = clone.querySelector('.pp-logo-circle');
-      if (logoCircle) {
-        logoCircle.style.backgroundColor = '#fff';
-        logoCircle.style.boxShadow = 'none';
+    clone.querySelectorAll('*').forEach(el => {
+      const computed = window.getComputedStyle(el).backgroundColor;
+      if (computed === 'rgba(0, 0, 0, 0)' || computed === 'transparent') {
+        el.style.backgroundColor = '#0D0D0D';
       }
+    });
 
-      offscreen.appendChild(clone);
-      document.body.appendChild(offscreen);
+    const card = clone.querySelector('.pp-card');
+    if (card) card.style.backgroundColor = '#1C1C1E';
+    const bankCircles = clone.querySelectorAll('.pp-bank-logo-circle, .pp-debit-icon-box');
+    bankCircles.forEach(el => { el.style.backgroundColor = '#2C2C2E'; });
 
-      const canvas = await html2canvas(offscreen, {
+    const logoCircle = clone.querySelector('.pp-logo-circle');
+    if (logoCircle) {
+      logoCircle.style.backgroundColor = '#fff';
+      logoCircle.style.boxShadow = 'none';
+    }
+
+    offscreen.appendChild(clone);
+    document.body.appendChild(offscreen);
+
+    try {
+      return await html2canvas(offscreen, {
         scale: 3,
         useCORS: true,
         backgroundColor: '#0D0D0D',
         logging: false,
       });
-
+    } finally {
       document.body.removeChild(offscreen);
+    }
+  };
 
+  const handleDownloadPDF = async () => {
+    if (!wrapperRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const canvas = await renderCanvas();
       const pdfW = 595.28;
       const pdfH = (canvas.height / canvas.width) * pdfW;
-
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: [pdfW, pdfH],
-      });
-
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [pdfW, pdfH] });
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
       pdf.save(`phonepe-receipt-${txnId}.pdf`);
     } catch (err) {
       console.error('PDF generation failed', err);
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadPNG = async () => {
+    if (!wrapperRef.current || downloadingPng) return;
+    setDownloadingPng(true);
+    try {
+      const canvas = await renderCanvas();
+      const link = document.createElement('a');
+      link.download = `phonepe-receipt-${txnId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('PNG generation failed', err);
+    } finally {
+      setDownloadingPng(false);
     }
   };
 
@@ -235,6 +247,21 @@ export default function PhonePeReceipt({ data, onNewTransaction }) {
               <>
                 <span className="action-btn-icon-inline">⬇</span>
                 <span className="pp-action-text">Download as PDF</span>
+              </>
+            )}
+          </button>
+
+          <button
+            className="pp-action-btn pp-download-btn"
+            onClick={handleDownloadPNG}
+            disabled={downloadingPng}
+          >
+            {downloadingPng ? (
+              <span className="pp-action-text">Generating PNG…</span>
+            ) : (
+              <>
+                <span className="action-btn-icon-inline">⬇</span>
+                <span className="pp-action-text">Download as PNG</span>
               </>
             )}
           </button>

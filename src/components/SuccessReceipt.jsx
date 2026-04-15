@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import { getBankById } from '../data/banks';
@@ -32,20 +32,103 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
   } = data;
 
   const cardRef = useRef(null);
+  const amountRowRef = useRef(null);
+  const amountTextRef = useRef(null);
+  const iconRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingPng, setDownloadingPng] = useState(false);
+
+  // Auto-fit amount font size: pick the largest size within [MIN, MAX] that
+  // keeps amount text + icon inside the row. Short values grow, long values
+  // shrink — something plain CSS clamp can't do because it doesn't know
+  // content length.
+  useLayoutEffect(() => {
+    const row = amountRowRef.current;
+    const text = amountTextRef.current;
+    const icon = iconRef.current;
+    if (!row || !text) return;
+    const MIN = 18;
+    const MAX = 56;
+    const fit = () => {
+      const iconW = icon ? icon.getBoundingClientRect().width : 0;
+      const gap = 10;
+      const available = row.clientWidth - iconW - gap;
+      let lo = MIN;
+      let hi = MAX;
+      text.style.fontSize = `${MAX}px`;
+      // Binary search for largest size that fits.
+      for (let i = 0; i < 10; i++) {
+        const mid = (lo + hi) / 2;
+        text.style.fontSize = `${mid}px`;
+        if (text.scrollWidth <= available) lo = mid;
+        else hi = mid;
+      }
+      text.style.fontSize = `${Math.floor(lo)}px`;
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(row);
+    return () => ro.disconnect();
+  }, [amount]);
 
   const recipientBankInfo = getBankById(recipientBank?.id);
   const senderBankInfo = getBankById(senderBank?.id);
 
   const paidInSeconds = (1.5 + (parseInt(txnId.slice(-3), 36) % 500) / 100).toFixed(2);
 
+  const captureCard = async () => {
+    // html-to-image (via SVG foreignObject) is the only option that respects
+    // CSS mask — needed for the scallop edges. But mobile Safari drops remote
+    // <img> during serialization, so we pre-inline every image as a data URL
+    // before the capture, then restore the originals afterwards.
+    const imgs = Array.from(cardRef.current.querySelectorAll('img'));
+    const originals = imgs.map((el) => el.src);
+    await Promise.all(
+      imgs.map(async (el) => {
+        try {
+          // Load the image so we know its intrinsic size.
+          if (!(el.complete && el.naturalWidth > 0)) {
+            await new Promise((r) => { el.onload = r; el.onerror = r; });
+          }
+          // Downscale through a canvas to cap the data URL size. Safari iOS
+          // drops SVG foreignObject when an embedded image data URL is too
+          // large (rocket.png = 1.5MB was failing). Target 2× the displayed
+          // box so the capture stays sharp at devicePixelRatio up to 2.
+          // Scale to 3× rendered size to match toPng's pixelRatio of 3,
+          // so the embedded image stays sharp in the final capture.
+          const rect = el.getBoundingClientRect();
+          const targetW = Math.max(1, Math.round(rect.width * 3));
+          const targetH = Math.max(1, Math.round(rect.height * 3));
+          const canvas = document.createElement('canvas');
+          canvas.width = targetW;
+          canvas.height = targetH;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(el, 0, 0, targetW, targetH);
+          el.src = canvas.toDataURL('image/png');
+          await new Promise((r) => {
+            if (el.complete && el.naturalWidth > 0) return r();
+            el.onload = r;
+            el.onerror = r;
+          });
+        } catch {
+          // Leave original src on failure.
+        }
+      })
+    );
+
+    try {
+      await toPng(cardRef.current, { pixelRatio: 1 });
+      return await toPng(cardRef.current, { pixelRatio: 3 });
+    } finally {
+      imgs.forEach((el, i) => { el.src = originals[i]; });
+    }
+  };
+
   const handleDownloadPDF = async () => {
     if (!cardRef.current || downloading) return;
     setDownloading(true);
     try {
-      // Capture the live card element — already fully rendered by the browser
-      // so mask / -webkit-mask is respected by html-to-image's foreignObject approach.
-      const cardDataUrl = await toPng(cardRef.current, { pixelRatio: 3 });
+      const cardDataUrl = await captureCard();
 
       const img = new Image();
       img.src = cardDataUrl;
@@ -77,6 +160,43 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
     }
   };
 
+  const handleDownloadPNG = async () => {
+    if (!cardRef.current || downloadingPng) return;
+    setDownloadingPng(true);
+    try {
+      const cardDataUrl = await captureCard();
+
+      const img = new Image();
+      img.src = cardDataUrl;
+      await new Promise((res) => { img.onload = res; });
+
+      const pad = 60;
+      const outW = img.naturalWidth + pad * 2;
+      const outH = img.naturalHeight + pad * 2;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = outW;
+      canvas.height = outH;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#01b9f3';
+      ctx.fillRect(0, 0, outW, outH / 2);
+      ctx.fillStyle = '#052a7b';
+      ctx.fillRect(0, outH / 2, outW, outH / 2);
+
+      ctx.drawImage(img, pad, pad);
+
+      const link = document.createElement('a');
+      link.download = `paytm-receipt-${txnId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('PNG generation failed', err);
+    } finally {
+      setDownloadingPng(false);
+    }
+  };
+
   return (
     <div id="receipt-screen">
       <div className="receipt-fullscreen-layout">
@@ -91,12 +211,13 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
 
             <h4 className="success-text">Payment Successful</h4>
 
-            <div className="amount-row">
-              <span className="amount-text">₹{formatINR(amount)}</span>
+            <div className="amount-row" ref={amountRowRef}>
+              <span className="amount-text" ref={amountTextRef}>₹{formatINR(amount)}</span>
               <img
                 src="/assets/pmn-success.png"
                 className="success-icon"
                 alt="Success"
+                ref={iconRef}
               />
             </div>
 
@@ -180,6 +301,21 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
               <>
                 <span className="action-btn-icon-inline">⬇</span>
                 <span className="action-btn-text">Download as PDF</span>
+              </>
+            )}
+          </button>
+
+          <button
+            className="action-btn download-btn"
+            onClick={handleDownloadPNG}
+            disabled={downloadingPng}
+          >
+            {downloadingPng ? (
+              <span className="action-btn-text">Generating PNG…</span>
+            ) : (
+              <>
+                <span className="action-btn-icon-inline">⬇</span>
+                <span className="action-btn-text">Download as PNG</span>
               </>
             )}
           </button>

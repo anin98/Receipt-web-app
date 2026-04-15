@@ -478,24 +478,23 @@ body {
 ============================================================ */
 
 #receipt-screen {
-  height: 100dvh;
-  position: fixed;
-  inset: 0;
+  min-height: 100dvh;
   background: linear-gradient(
     to bottom,
     var(--cyan) 50%,
     var(--dark-blue) 50%
   );
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  overflow-y: auto;
 }
 
-/* Full-screen flex column: card fills available space, buttons sit at bottom */
+/* Flex column: card + buttons flow naturally, whole page scrolls if needed */
 .receipt-fullscreen-layout {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100dvh;
   width: 100%;
   max-width: 480px;
   padding: 20px 20px 24px 20px;
@@ -504,20 +503,10 @@ body {
   margin-right: auto;
 }
 
-/* Card area grows to fill space; scrolls only when content overflows */
 .receipt-card-area {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   animation: receiptIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  /* Hide scrollbar so it never shifts the card left (overlay only) */
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE / Edge legacy */
-}
-.receipt-card-area::-webkit-scrollbar {
-  display: none;                /* Chrome / Safari / WebKit */
 }
 
 @keyframes receiptIn {
@@ -540,25 +529,26 @@ body {
   position: relative;
   width: 100%;
   align-self: center;
+  container-type: inline-size;
 
-  /* Mask: arches anchored to x=0 so the wave starts right at the card edge */
+  /* Mask: true sinusoidal wave via inline SVG. Responsive via --wave-w / --wave-h. */
+  --wave-w: 30px;
+  --wave-h: 10px;
+  --wave-top: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='10' viewBox='0 0 30 10' preserveAspectRatio='none'><path d='M0 5 Q 7.5 -5 15 5 Q 22.5 15 30 5 L30 10 L0 10 Z' fill='black'/></svg>");
+  --wave-bottom: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='10' viewBox='0 0 30 10' preserveAspectRatio='none'><path d='M0 5 Q 7.5 15 15 5 Q 22.5 -5 30 5 L30 0 L0 0 Z' fill='black'/></svg>");
+
   --mask:
-    /* 1. Top Wave: Arches — tile origin at -20px so arch centre sits on x=0 */
-    radial-gradient(10px at 50% 15px, #000 99%, #0000 101%) -20px 0/40px 50px repeat-x,
-    /* 2. Top Wave: Bites — offset by one half-tile (20px) to fall between arches */
-    radial-gradient(14px at 50% -8px, #0000 99%, #000 101%) 0 10px/40px 20px repeat-x,
-
-    /* 3. Bottom Wave: Arches */
-    radial-gradient(11px at 50% calc(100% - 16px), #000 99%, #0000 101%) -20px 100%/40px 20px repeat-x,
-    /* 4. Bottom Wave: Bites */
-    radial-gradient(12px at 50% calc(100% + 6px), #0000 99%, #000 101%) 0 calc(100% - 10px)/40px 20px repeat-x,
-
-    /* 5. Solid Body */
-    linear-gradient(#000, #000) 0 20px/100% calc(100% - 40px) no-repeat;
+    /* Shift by −(wave-w / 4) so tiles start at a peak, matching the SVG. */
+    var(--wave-top) calc(var(--wave-w) / -4) top / var(--wave-w) var(--wave-h) repeat-x,
+    var(--wave-bottom) calc(var(--wave-w) / -4) bottom / var(--wave-w) var(--wave-h) repeat-x,
+    linear-gradient(#000, #000) 0 var(--wave-h) / 100% calc(100% - 2 * var(--wave-h)) no-repeat;
 
   -webkit-mask: var(--mask);
   mask: var(--mask);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
 }
+
 /* Action buttons row at the bottom */
 .receipt-actions {
   display: flex;
@@ -583,6 +573,8 @@ body {
 
   .receipt-card {
     padding: 24px 16px 24px;
+    --wave-w: 24px;
+    --wave-h: 8px;
   }
 
   .receipt-logo {
@@ -600,8 +592,8 @@ body {
   }
 
   .success-icon {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
   }
 
   .amount-row {
@@ -651,6 +643,8 @@ body {
 @media (max-width: 360px) {
   .receipt-card {
     padding: 18px 12px 24px;
+    --wave-w: 20px;
+    --wave-h: 6px;
   }
 
   .amount-text {
@@ -658,7 +652,7 @@ body {
   }
 
   .party-name {
-    font-size: 14px;
+    font-size: 22px;
   }
 
   .bank-text-receipt {
@@ -687,31 +681,47 @@ body {
 }
 
 .success-text {
-  font-size: 20px;
-  color: #000000;
-  font-weight: 600;
+  font-size: 22px;
+  color: #333;
+  font-weight: 400;
   margin: 2px 0 6px;
 }
 
 .amount-row {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 10px;
-  margin-bottom: 54px;
+  margin-bottom: 42px;
+  width: 100%;
+  min-width: 0;
 }
 
 .amount-text {
-  font-size: 44px;
+  /* Shrinks with card width via container units so long amounts
+     (up to ~15 digits) stay within the card. */
+  font-size: clamp(18px, 8cqi, 56px);
   font-weight: 900;
   color: #111;
   letter-spacing: -1px;
   line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .success-icon {
-  width: 60px;
-  height: 60px;
+  width: clamp(32px, 10cqi, 60px);
+  height: clamp(32px, 10cqi, 60px);
   object-fit: contain;
+  flex-shrink: 0;
+  transform: translateY(-6px);
+}
+
+@media (max-width: 600px) {
+  .success-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 .hairline {
@@ -730,15 +740,16 @@ body {
 }
 
 .party-name {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 800;
   color: #1a1a1a;
-  margin-bottom: 5px;
+  margin-bottom: 12px;
 }
 
 .to-from-label {
   color: #1a1a1a;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 20px;
 }
 
 .bank-row-receipt {
@@ -756,9 +767,9 @@ body {
 }
 
 .bank-text-receipt {
-  font-size: 14px;
-  color: #000000;
-  font-weight: 500;
+  font-size: 15px;
+  color: #000;
+  font-weight: 400;
 }
 
 .paid-row {
@@ -771,13 +782,17 @@ body {
 
 .dotted-line {
   flex: 1;
-  height: 0;
-  border-top: 1.5px dashed #ccc;
+  height: 3px;
+  background-image: radial-gradient(circle closest-side, #7d7d7d 99%, transparent 100%);
+  background-size: 11px 3px;
+  background-repeat: repeat-x;
+  background-position: center;
 }
 
 .paid-text {
-  font-size: 12px;
-  color: #555;
+  font-size: 13px;
+  font-weight: 400;
+  color: #808080;
   white-space: nowrap;
   flex-shrink: 0;
   display: flex;
@@ -792,8 +807,9 @@ body {
 }
 
 .ref-text {
-  font-size: 14px;
-  color: #9e9494;
+  font-size: 15px;
+  font-weight: 600;
+  color: #6b6b6b;
   text-align: center;
   margin-top: 10px;
 }
@@ -841,8 +857,8 @@ body {
 }
 
 .upi-logo {
-  width: 40px;
-  height: 40px;
+  width: 52px;
+  height: auto;
   object-fit: contain;
 }
 
