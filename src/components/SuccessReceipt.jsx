@@ -186,7 +186,7 @@ export default function SuccessReceipt({ data, onNewTransaction }) {
 
           <button className="action-btn" onClick={onNewTransaction}>
             <span className="action-btn-text">New Transaction</span>
-          </button>
+          </button>git
         </div>
       </div>
     </div>
