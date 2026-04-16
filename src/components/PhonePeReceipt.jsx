@@ -79,7 +79,7 @@ export default function PhonePeReceipt({ data, onNewTransaction }) {
     const card = clone.querySelector('.pp-card');
     if (card) card.style.backgroundColor = '#1C1C1E';
     const bankCircles = clone.querySelectorAll('.pp-bank-logo-circle, .pp-debit-icon-box');
-    bankCircles.forEach(el => { el.style.backgroundColor = '#2C2C2E'; });
+    bankCircles.forEach(el => { el.style.backgroundColor = '#ffffff'; });
 
     const logoCircle = clone.querySelector('.pp-logo-circle');
     if (logoCircle) {
@@ -181,7 +181,7 @@ export default function PhonePeReceipt({ data, onNewTransaction }) {
                 <div className="pp-banking-name-value">
                   <span className="pp-colon">: </span>
                   <span className="pp-banking-name-text">{recipientName}</span>
-                  <span className="pp-verified-badge">✓</span>
+                  <img src="/assets/shield-check.svg" className="pp-verified-badge" alt="Verified" />
                 </div>
               </div>
 
