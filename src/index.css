@@ -1119,8 +1119,8 @@ body {
 
 .pp-recipient-name {
   font-size: 18px;
-  font-weight: 400;
-  color: #dedede;
+  font-weight: 300;
+  color: #d9d5d5;
   margin-bottom: 2px;
 }
 
@@ -1184,7 +1184,8 @@ body {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  display: block;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Transfer Details */
@@ -1207,22 +1208,18 @@ body {
 }
 
 .pp-details-icon-box {
-  width: 24px;
-  height: 32px;
-  border-radius: 8px;
- 
-  color: #dfdfdf;
-  font-size: 14px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  flex-shrink: 0;
+  color: #dfdfdf;
 }
 
 .pp-details-icon-img {
   width: auto;
   height: 20px;
   max-width: 30px;
+  display: block;
 }
 
 
@@ -1290,7 +1287,7 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: #dfdfdf;
-  margin-bottom: 2px;
+  margin-bottom: 12px;
 }
 
 .pp-debit-utr {
