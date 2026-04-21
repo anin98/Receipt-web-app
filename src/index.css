@@ -42,8 +42,8 @@ body {
 
 @media (min-width: 600px) {
   #form-screen {
-    padding-left: max(20px, calc((100% - 560px) / 2));
-    padding-right: max(20px, calc((100% - 560px) / 2));
+    padding-left: max(20px, calc((100% - 640px) / 2));
+    padding-right: max(20px, calc((100% - 640px) / 2));
   }
 }
 
@@ -65,7 +65,7 @@ body {
   font-size: 20px;
   color: var(--teal);
   font-weight: 600;
-  margin-top: -4px;
+  margin-top: 2px;
   letter-spacing: 0.4px;
 }
 
@@ -561,7 +561,7 @@ body {
   --wave-bottom: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='10' viewBox='0 0 30 10' preserveAspectRatio='none'><path d='M0 5 Q 7.5 15 15 5 Q 22.5 -5 30 5 L30 0 L0 0 Z' fill='black'/></svg>");
 
   --mask:
-    /* Shift by −(wave-w / 4) so tiles start at a peak, matching the SVG. */
+    /* −(wave-w/4) offset puts left edge at a peak; wrapper max-width is chosen so card = N×wave-w, making right edge also land on a peak. */
     var(--wave-top) calc(var(--wave-w) / -4) top / var(--wave-w) var(--wave-h) repeat-x,
     var(--wave-bottom) calc(var(--wave-w) / -4) bottom / var(--wave-w) var(--wave-h) repeat-x,
     linear-gradient(#000, #000) 0 var(--wave-h) / 100% calc(100% - 2 * var(--wave-h)) no-repeat;
@@ -737,7 +737,7 @@ body {
   height: clamp(32px, 10cqi, 60px);
   object-fit: contain;
   flex-shrink: 0;
-  transform: translateY(-1px);
+  transform: translateY(4px);
 }
 
 @media (max-width: 600px) {
@@ -763,7 +763,7 @@ body {
 }
 
 .party-name {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: #1a1a1a;
   margin-bottom: 12px;
@@ -772,7 +772,7 @@ body {
 .to-from-label {
   color: #1a1a1a;
   font-weight: 800;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .bank-row-receipt {
@@ -782,11 +782,12 @@ body {
 }
 
 .bank-logo-receipt {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 2px;
   object-fit: contain;
   flex-shrink: 0;
+  transform: translateY(-2px);
 }
 
 .bank-text-receipt {
@@ -1882,11 +1883,15 @@ body {
 
 @media (min-width: 1024px) {
   .form-col {
-    width: 600px;
+    width: 700px;
     max-height: 100dvh;
     overflow-y: auto;
     position: sticky;
     top: 0;
+  }
+
+  .submit-btn {
+    display: none;
   }
 
   .form-col #form-screen {
@@ -1919,7 +1924,7 @@ body {
 /* Receipt card preview wrappers */
 .receipt-preview-card-wrap {
   width: 100%;
-  max-width: 420px;
+  max-width: 486px; /* 18px padding each side → card = 450px = 15 × 30px wave, so both edges land on a peak */
   padding: 18px;
   background: linear-gradient(to bottom, #01b9f3 50%, #052a7b 50%);
 }

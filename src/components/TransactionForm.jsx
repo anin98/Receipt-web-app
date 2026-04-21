@@ -648,9 +648,38 @@ export default function TransactionForm({ onSubmit }) {
             <img
               src={previewImageUrl}
               alt="Receipt Preview"
-              style={{ width: '100%', maxWidth: appMode === 'bankportal' ? '860px' : '420px', display: 'block', margin: '0 auto' }}
+              style={{ width: '100%', maxWidth: appMode === 'bankportal' ? '860px' : appMode === 'paytm' ? '486px' : '420px', display: 'block', margin: '0 auto' }}
               draggable
             />
+          )}
+          {/* Download button below the preview card */}
+          {previewImageUrl && (
+            <a
+              href={previewImageUrl}
+              download={`receipt-${liveData.txnId}.png`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                marginTop: 20,
+                padding: '12px 28px',
+                background: 'var(--dark-blue)',
+                color: '#fff',
+                borderRadius: 12,
+                fontFamily: 'inherit',
+                fontSize: 15,
+                fontWeight: 700,
+                textDecoration: 'none',
+                boxShadow: 'var(--btn-shadow)',
+                transition: 'opacity 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <span style={{ fontSize: 16 }}>⬇</span>
+              Download Receipt
+            </a>
           )}
         </div>
       </div>
