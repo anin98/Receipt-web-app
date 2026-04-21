@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { toPng } from 'html-to-image';
 import BankModal from './BankModal';
 import { randomDigits, generateTxnId, generatePhonePeTxnId, buildUpiId, buildUpiTxnId } from '../data/banks';
+import SuccessReceipt from './SuccessReceipt';
+import PhonePeReceipt from './PhonePeReceipt';
+import NaviReceipt from './NaviReceipt';
+import BankPortalReceipt from './BankPortalReceipt';
 
 const DEFAULT_BALANCE = 120;
 
@@ -68,6 +73,9 @@ export default function TransactionForm({ onSubmit }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [modalPicker, setModalPicker] = useState(null);
+  const hiddenReceiptRef = useRef(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState('');
+  const captureTimer = useRef(null);
 
   useEffect(() => {
     if (!naviUpiDirty.current) {
@@ -157,10 +165,85 @@ export default function TransactionForm({ onSubmit }) {
   const clearErr = (key) =>
     setErrors((prev) => { const e = { ...prev }; delete e[key]; return e; });
 
+  const previewBg = '#ffffff';
+
+  const previewLabelColor = '#555';
+
+  const liveData = {
+    mode: appMode,
+    senderName,
+    senderBank,
+    senderDigits: senderDigits || '0000',
+    recipientName,
+    recipientPhone,
+    recipientBank,
+    recipientDigits: recipientDigits || '0000',
+    amount: amount || '0',
+    updatedBalance: String((parseFloat(walletBalance || DEFAULT_BALANCE) - parseFloat(amount || 0)).toFixed(2)),
+    txnId,
+    timestamp: `${txnDate} ${txnTime}`,
+    naviUpiId: naviUpiId || buildUpiId(recipientPhone, recipientBank?.id),
+    naviTxnId: naviTxnId || buildUpiTxnId(txnId),
+    bpIfsc,
+    bpRemark,
+    ppTxnId,
+    ppUtr,
+  };
+
+  useEffect(() => {
+    // Clear stale image so the receipt component becomes visible and can be captured.
+    setPreviewImageUrl('');
+    clearTimeout(captureTimer.current);
+    captureTimer.current = setTimeout(async () => {
+      const wrap = hiddenReceiptRef.current;
+      if (!wrap) return;
+      const cardSelectors = {
+        paytm: '.receipt-preview-card-wrap',
+        phonepe: '.pp-preview-wrap',
+        navi: '.navi-preview-wrap',
+        bankportal: '.bp-page',
+      };
+      const el = wrap.querySelector(cardSelectors[appMode]) || wrap;
+      // Pre-inline every <img> as a data URL (same technique as captureCard in receipts).
+      const imgs = Array.from(el.querySelectorAll('img'));
+      const originals = imgs.map((i) => i.src);
+      await Promise.all(imgs.map(async (img) => {
+        try {
+          if (!(img.complete && img.naturalWidth > 0)) {
+            await new Promise((r) => { img.onload = r; img.onerror = r; });
+          }
+          const rect = img.getBoundingClientRect();
+          const w = Math.max(1, Math.round((rect.width || img.naturalWidth) * 2));
+          const h = Math.max(1, Math.round((rect.height || img.naturalHeight) * 2));
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          img.src = canvas.toDataURL('image/png');
+          await new Promise((r) => {
+            if (img.complete && img.naturalWidth > 0) return r();
+            img.onload = r; img.onerror = r;
+          });
+        } catch { /* leave original src */ }
+      }));
+      try {
+        await toPng(el, { pixelRatio: 1 }); // warm cache
+        const url = await toPng(el, { pixelRatio: 2 });
+        setPreviewImageUrl(url);
+      } catch { /* keep component visible on failure */ }
+      finally {
+        imgs.forEach((img, i) => { img.src = originals[i]; });
+      }
+    }, 400);
+    return () => clearTimeout(captureTimer.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(liveData), appMode]);
+
   return (
     <>
-      <div id="form-screen">
-        <form onSubmit={handleSubmit} noValidate>
+      <div className="desktop-wrapper">
+        <div className="form-col">
+          <div id="form-screen">
+            <form onSubmit={handleSubmit} noValidate>
 
           {/* Header */}
           <div className="header">
@@ -545,7 +628,31 @@ export default function TransactionForm({ onSubmit }) {
               </>
             )}
           </button>
-        </form>
+            </form>
+          </div>
+        </div>
+
+        <div className="preview-col" style={{ background: previewBg }}>
+          <p className="preview-label" style={{ color: previewLabelColor }}>Live Preview</p>
+          {/* While data is settling (no captured image yet), show the live component */}
+          {!previewImageUrl && (
+            <div ref={hiddenReceiptRef} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              {appMode === 'paytm' && <SuccessReceipt data={liveData} preview />}
+              {appMode === 'phonepe' && <PhonePeReceipt data={liveData} preview />}
+              {appMode === 'navi' && <NaviReceipt data={liveData} preview />}
+              {appMode === 'bankportal' && <BankPortalReceipt data={liveData} preview />}
+            </div>
+          )}
+          {/* Once captured, show a real <img> — right-click → Copy Image works natively */}
+          {previewImageUrl && (
+            <img
+              src={previewImageUrl}
+              alt="Receipt Preview"
+              style={{ width: '100%', maxWidth: appMode === 'bankportal' ? '860px' : '420px', display: 'block', margin: '0 auto' }}
+              draggable
+            />
+          )}
+        </div>
       </div>
 
       <BankModal

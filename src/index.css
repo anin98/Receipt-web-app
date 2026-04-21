@@ -35,15 +35,15 @@ body {
 ============================================================ */
 
 #form-screen {
-  background: var(--bg-light);
+  background: #ffffff;
   min-height: 100dvh;
   padding: 16px 20px 48px;
 }
 
 @media (min-width: 600px) {
   #form-screen {
-    padding-left: max(20px, calc((100% - 480px) / 2));
-    padding-right: max(20px, calc((100% - 480px) / 2));
+    padding-left: max(20px, calc((100% - 560px) / 2));
+    padding-right: max(20px, calc((100% - 560px) / 2));
   }
 }
 
@@ -75,7 +75,8 @@ body {
   border-radius: 16px;
   padding: 18px;
   margin-bottom: 14px;
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(5,42,123,0.06);
+  border: 1px solid #E5E8F2;
 }
 
 .section-header {
@@ -114,28 +115,31 @@ body {
 
 .input {
   width: 100%;
-  border: 1.5px solid #000;
+  border: 1.5px solid #D8DCE8;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 15px;
   color: var(--dark-text);
-  background: var(--fafafa);
+  background: #F4F6FB;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.15s;
+  transition: border-color 0.18s, box-shadow 0.18s;
   display: block;
 }
 
 .input::placeholder {
-  color: var(--light-gray);
+  color: #B0B8CC;
 }
 
 .input:focus {
   border-color: var(--dark-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(5, 42, 123, 0.08);
 }
 
 .input.error {
   border-color: var(--error);
+  background: #FFF5F5;
 }
 
 /* Remove number input arrows */
@@ -159,21 +163,33 @@ body {
 /* Bank Selector */
 .bank-selector {
   width: 100%;
-  border: 1.5px solid #000;
+  border: 1.5px solid #D8DCE8;
   border-radius: 10px;
   padding: 10px 12px;
-  background: var(--fafafa);
+  background: #F4F6FB;
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
-  transition: border-color 0.15s;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.bank-selector:hover {
+  border-color: #a0aac4;
+}
+
+.bank-selector:focus {
+  border-color: var(--dark-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(5, 42, 123, 0.08);
+  outline: none;
 }
 
 .bank-selector.error {
   border-color: var(--error);
+  background: #FFF5F5;
 }
 
 .bank-selector:active {
@@ -230,12 +246,19 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1.5px solid #000;
+  border: 1.5px solid #D8DCE8;
   border-radius: 10px;
   padding: 10px 12px;
-  background: var(--fafafa);
+  background: #F4F6FB;
   cursor: pointer;
   font-family: inherit;
+  transition: border-color 0.18s;
+}
+
+.picker-btn:focus-within {
+  border-color: var(--dark-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(5, 42, 123, 0.08);
 }
 
 .picker-btn-icon {
@@ -478,24 +501,23 @@ body {
 ============================================================ */
 
 #receipt-screen {
-  height: 100dvh;
-  position: fixed;
-  inset: 0;
+  min-height: 100dvh;
   background: linear-gradient(
     to bottom,
     var(--cyan) 50%,
     var(--dark-blue) 50%
   );
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  overflow-y: auto;
 }
 
-/* Full-screen flex column: card fills available space, buttons sit at bottom */
+/* Flex column: card + buttons flow naturally, whole page scrolls if needed */
 .receipt-fullscreen-layout {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100dvh;
   width: 100%;
   max-width: 480px;
   padding: 20px 20px 24px 20px;
@@ -504,20 +526,10 @@ body {
   margin-right: auto;
 }
 
-/* Card area grows to fill space; scrolls only when content overflows */
 .receipt-card-area {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   animation: receiptIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  /* Hide scrollbar so it never shifts the card left (overlay only) */
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE / Edge legacy */
-}
-.receipt-card-area::-webkit-scrollbar {
-  display: none;                /* Chrome / Safari / WebKit */
 }
 
 @keyframes receiptIn {
@@ -540,25 +552,26 @@ body {
   position: relative;
   width: 100%;
   align-self: center;
+  container-type: inline-size;
 
-  /* Mask: arches anchored to x=0 so the wave starts right at the card edge */
+  /* Mask: true sinusoidal wave via inline SVG. Responsive via --wave-w / --wave-h. */
+  --wave-w: 30px;
+  --wave-h: 10px;
+  --wave-top: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='10' viewBox='0 0 30 10' preserveAspectRatio='none'><path d='M0 5 Q 7.5 -5 15 5 Q 22.5 15 30 5 L30 10 L0 10 Z' fill='black'/></svg>");
+  --wave-bottom: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='10' viewBox='0 0 30 10' preserveAspectRatio='none'><path d='M0 5 Q 7.5 15 15 5 Q 22.5 -5 30 5 L30 0 L0 0 Z' fill='black'/></svg>");
+
   --mask:
-    /* 1. Top Wave: Arches — tile origin at -20px so arch centre sits on x=0 */
-    radial-gradient(10px at 50% 15px, #000 99%, #0000 101%) -20px 0/40px 50px repeat-x,
-    /* 2. Top Wave: Bites — offset by one half-tile (20px) to fall between arches */
-    radial-gradient(14px at 50% -8px, #0000 99%, #000 101%) 0 10px/40px 20px repeat-x,
-
-    /* 3. Bottom Wave: Arches */
-    radial-gradient(11px at 50% calc(100% - 16px), #000 99%, #0000 101%) -20px 100%/40px 20px repeat-x,
-    /* 4. Bottom Wave: Bites */
-    radial-gradient(12px at 50% calc(100% + 6px), #0000 99%, #000 101%) 0 calc(100% - 10px)/40px 20px repeat-x,
-
-    /* 5. Solid Body */
-    linear-gradient(#000, #000) 0 20px/100% calc(100% - 40px) no-repeat;
+    /* Shift by −(wave-w / 4) so tiles start at a peak, matching the SVG. */
+    var(--wave-top) calc(var(--wave-w) / -4) top / var(--wave-w) var(--wave-h) repeat-x,
+    var(--wave-bottom) calc(var(--wave-w) / -4) bottom / var(--wave-w) var(--wave-h) repeat-x,
+    linear-gradient(#000, #000) 0 var(--wave-h) / 100% calc(100% - 2 * var(--wave-h)) no-repeat;
 
   -webkit-mask: var(--mask);
   mask: var(--mask);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
 }
+
 /* Action buttons row at the bottom */
 .receipt-actions {
   display: flex;
@@ -583,6 +596,8 @@ body {
 
   .receipt-card {
     padding: 24px 16px 24px;
+    --wave-w: 24px;
+    --wave-h: 8px;
   }
 
   .receipt-logo {
@@ -600,8 +615,8 @@ body {
   }
 
   .success-icon {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
   }
 
   .amount-row {
@@ -651,6 +666,8 @@ body {
 @media (max-width: 360px) {
   .receipt-card {
     padding: 18px 12px 24px;
+    --wave-w: 20px;
+    --wave-h: 6px;
   }
 
   .amount-text {
@@ -658,7 +675,7 @@ body {
   }
 
   .party-name {
-    font-size: 14px;
+    font-size: 22px;
   }
 
   .bank-text-receipt {
@@ -680,38 +697,54 @@ body {
 
 /* Receipt content */
 .receipt-logo {
-  width: 120px;
+  width: 90px;
   height: auto;
   object-fit: contain;
-  margin: 0px 0 6px;
+  margin: -18px 0 6px;
 }
 
 .success-text {
-  font-size: 20px;
-  color: #000000;
-  font-weight: 600;
-  margin: 2px 0 6px;
+  font-size: 22px;
+  color: #333;
+  font-weight: 400;
+  margin: -12px 0 18px;
 }
 
 .amount-row {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 10px;
-  margin-bottom: 54px;
+  margin-bottom: 52px;
+  width: 100%;
+  min-width: 0;
 }
 
 .amount-text {
-  font-size: 44px;
-  font-weight: 900;
+  /* Shrinks with card width via container units so long amounts
+     (up to ~15 digits) stay within the card. */
+  font-size: clamp(18px, 8cqi, 36px);
+  font-weight: 700;
   color: #111;
   letter-spacing: -1px;
   line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .success-icon {
-  width: 60px;
-  height: 60px;
+  width: clamp(32px, 10cqi, 60px);
+  height: clamp(32px, 10cqi, 60px);
   object-fit: contain;
+  flex-shrink: 0;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .success-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 .hairline {
@@ -730,15 +763,16 @@ body {
 }
 
 .party-name {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 800;
   color: #1a1a1a;
-  margin-bottom: 5px;
+  margin-bottom: 12px;
 }
 
 .to-from-label {
   color: #1a1a1a;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 20px;
 }
 
 .bank-row-receipt {
@@ -756,9 +790,9 @@ body {
 }
 
 .bank-text-receipt {
-  font-size: 14px;
-  color: #000000;
-  font-weight: 500;
+  font-size: 15px;
+  color: #000;
+  font-weight: 400;
 }
 
 .paid-row {
@@ -771,13 +805,17 @@ body {
 
 .dotted-line {
   flex: 1;
-  height: 0;
-  border-top: 1.5px dashed #ccc;
+  height: 3px;
+  background-image: radial-gradient(circle closest-side, #7d7d7d 99%, transparent 100%);
+  background-size: 11px 3px;
+  background-repeat: repeat-x;
+  background-position: center;
 }
 
 .paid-text {
-  font-size: 12px;
-  color: #555;
+  font-size: 13px;
+  font-weight: 400;
+  color: #808080;
   white-space: nowrap;
   flex-shrink: 0;
   display: flex;
@@ -792,8 +830,9 @@ body {
 }
 
 .ref-text {
-  font-size: 14px;
-  color: #9e9494;
+  font-size: 15px;
+  font-weight: 600;
+  color: #6b6b6b;
   text-align: center;
   margin-top: 10px;
 }
@@ -814,8 +853,8 @@ body {
 }
 
 .footer-logo {
-  width: 56px;
-  height: 22px;
+  width: 36px;
+  height: 18px;
   object-fit: contain;
 }
 
@@ -832,7 +871,7 @@ body {
 }
 
 .powered-by {
-  font-size: 7px;
+  font-size: 5px;
   color: #aaa;
   letter-spacing: 0.3px;
   text-align: right;
@@ -841,14 +880,14 @@ body {
 }
 
 .upi-logo {
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: auto;
   object-fit: contain;
 }
 
 .hdfc-logo {
-  width: 72px;
-  height: 28px;
+  width: 52px;
+  height: 22px;
   object-fit: contain;
 }
 
@@ -909,11 +948,12 @@ body {
 
 .toggle-row {
   display: flex;
-  background: #fff;
+  background: #F4F6FB;
   border-radius: 12px;
   padding: 4px;
   margin-bottom: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  border: 1px solid #E5E8F2;
   gap: 4px;
 }
 
@@ -1016,13 +1056,13 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   padding-top: 28px;
 }
 
 .pp-logo-circle {
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #fff;
   display: flex;
@@ -1033,9 +1073,9 @@ body {
 }
 
 .pp-logo-img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
+  width: auto;
+  height: 32px;
+  max-width: 40px;
 }
 
 .pp-header-text {
@@ -1059,11 +1099,11 @@ body {
   width: 100%;
   background: #1C1C1E;
   border-radius: 16px;
-  padding: 20px;
+  padding: 20px 20px 20px 20px;
 }
 
 .pp-section-label {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: #fff;
   margin-bottom: 14px;
@@ -1072,16 +1112,16 @@ body {
 /* Paid to row */
 .pp-paid-to-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 16px;
   gap: 0;
 }
 
 .pp-bank-logo-circle {
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #2C2C2E;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1091,9 +1131,9 @@ body {
 }
 
 .pp-bank-logo-img {
-  width: 38px;
-  height: 38px;
-  background: #ffffff;
+  width: 36px;
+  height: 36px;
+  background: transparent;
   object-fit: contain;
 }
 
@@ -1102,28 +1142,29 @@ body {
 }
 
 .pp-recipient-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
+  font-size: 18px;
+  font-weight: 300;
+  color: #d9d5d5;
   margin-bottom: 2px;
 }
 
 .pp-masked-acct {
   font-size: 12px;
-  color: #8E8E93;
+  color: #979797;
   margin-bottom: 2px;
 }
 
 .pp-bank-name {
   font-size: 12px;
-  color: #8E8E93;
+  color: #979797;
 }
 
 .pp-amount-text {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e3e3e3;
   flex-shrink: 0;
+  margin-top: -4px;
 }
 
 .pp-divider {
@@ -1140,8 +1181,8 @@ body {
 }
 
 .pp-banking-name-label {
-  font-size: 13px;
-  color: #8E8E93;
+  font-size: 12px;
+  color: #bababa;
   flex: 1;
 }
 
@@ -1154,27 +1195,21 @@ body {
 
 .pp-colon {
   font-size: 13px;
-  color: #8E8E93;
+  color: #bababa;
 }
 
 .pp-banking-name-text {
   font-size: 13px;
-  color: #fff;
-  font-weight: 500;
+  color: #bababa;
+  font-weight: 400;
 }
 
 .pp-verified-badge {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #34C759;
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Transfer Details */
@@ -1197,29 +1232,25 @@ body {
 }
 
 .pp-details-icon-box {
-  width: 24px;
-  height: 32px;
-  border-radius: 8px;
- 
-  color: #fff;
-  font-size: 14px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  flex-shrink: 0;
+  color: #dfdfdf;
 }
 
 .pp-details-icon-img {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
+  width: auto;
+  height: 20px;
+  max-width: 30px;
+  display: block;
 }
 
 
 .pp-transfer-title {
   font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 400;
+  color: #dfdfdf;
 }
 
 .pp-chevron {
@@ -1240,9 +1271,9 @@ body {
 }
 
 .pp-detail-value {
-  font-size: 14px;
-  color: #fff;
-  font-weight: 500;
+  font-size: 15px;
+  color: #dfdfdf;
+  font-weight: 400;
   letter-spacing: 0.3px;
 }
 
@@ -1254,9 +1285,9 @@ body {
 }
 
 .pp-debit-icon-box {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -1264,35 +1295,41 @@ body {
   margin-right: 10px;
   flex-shrink: 0;
   overflow: hidden;
+  align-self: flex-start;
 }
 
 .pp-debit-bank-logo {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
 }
 
 .pp-debit-info {
   flex: 1;
+   margin-left: 10px;
 }
 
 .pp-debit-acct {
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 2px;
+  font-size: 16px;
+ 
+  color: #dfdfdf;
+  margin-bottom: 12px;
+ 
 }
 
 .pp-debit-utr {
-  font-size: 11px;
+  font-size: 16px;
   color: #8E8E93;
+  font-weight: 300px;
 }
 
 .pp-debit-amount {
   font-size: 16px;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 300;
+  color: #e3e3e3;
   flex-shrink: 0;
+  align-self: flex-start;
+  padding-top: 1px;
 }
 
 /* Powered by */
@@ -1310,8 +1347,8 @@ body {
 }
 
 .pp-upi-logo {
-  width: 44px;
-  height: 24px;
+  width: 36px;
+  height: 10px;
   object-fit: contain;
 }
 
@@ -1706,6 +1743,8 @@ body {
   border: 1px solid #E3E3E3;
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .bp-bankinfo-logo {
@@ -1745,23 +1784,27 @@ body {
 }
 
 .bp-details {
-  padding: 4px 20px 0 40px;
+  padding: 4px 32px 20px 40px;
 }
 
 .bp-row {
   display: flex;
   padding: 9px 0;
   font-size: 15px;
+  gap: 80px;
 }
 
 .bp-label {
   width: 260px;
+  min-width: 180px;
+  flex-shrink: 0;
   color: #2a2a2a;
   font-weight: 700;
 }
 
 .bp-value {
   color: #2a2a2a;
+  text-align: left;
 }
 
 .bp-link {
@@ -1810,7 +1853,96 @@ body {
 
 @media (max-width: 600px) {
   .bp-title { font-size: 20px; }
-  .bp-details { padding: 4px 0 0; }
+  .bp-details { padding: 4px 0 0 20px; }
   .bp-row { flex-direction: column; gap: 2px; padding: 8px 0; }
   .bp-label { width: auto; }
+}
+
+/* ============================================================
+   DESKTOP SPLIT LAYOUT
+============================================================ */
+
+.desktop-wrapper {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.form-col {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.form-col #form-screen {
+  min-height: 100dvh;
+}
+
+.preview-col {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .form-col {
+    width: 600px;
+    max-height: 100dvh;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+  }
+
+  .form-col #form-screen {
+    min-height: unset;
+  }
+
+  .preview-col {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    overflow-y: auto;
+    transition: background 0.3s;
+    min-height: 100dvh;
+    border-left: 1px solid #E5E8F2;
+  }
+}
+
+.preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.45;
+}
+
+/* Receipt card preview wrappers */
+.receipt-preview-card-wrap {
+  width: 100%;
+  max-width: 420px;
+  padding: 18px;
+  background: linear-gradient(to bottom, #01b9f3 50%, #052a7b 50%);
+}
+
+.pp-preview-wrap {
+  width: 100%;
+  max-width: 420px;
+  padding: 18px;
+  background: #0D0D0D;
+}
+
+.navi-preview-wrap {
+  width: 100%;
+  max-width: 420px;
+  padding: 18px;
+  background: #33043F;
+}
+
+.bp-preview-wrap {
+  width: 100%;
+  max-width: 860px;
+  padding: 18px;
+  background: #C0C8D0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
