@@ -132,7 +132,7 @@ export default function BankPortalReceipt({ data, onNewTransaction, preview }) {
 
       <div className="bp-success-bar">
         <span className="bp-success-icon">
-          <img src="/assets/bankinfo.png" className="bp-bankinfo-logo" alt="" />
+          <img src="/assets/Bank%20Logo/bankinfo.png" className="bp-bankinfo-logo" alt="" />
         </span>
         <span className="bp-success-text">
           Transaction with reference id {refId} processed successfully.

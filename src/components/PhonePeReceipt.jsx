@@ -220,7 +220,7 @@ export default function PhonePeReceipt({ data, onNewTransaction, preview }) {
       {/* Powered by */}
       <div className="pp-powered-row">
         <span className="pp-powered-text">Powered by</span>
-        <img src="/assets/UPI-Logo-vector.png" className="pp-upi-logo" alt="UPI" />
+        <img src="/assets/Bank%20Logo/UPI-Logo-vector.png" className="pp-upi-logo" alt="UPI" />
         <img src="/assets/Yes.png" className="pp-yes-logo" alt="Yes Bank" />
       </div>
     </div>
