@@ -724,7 +724,7 @@ body {
   /* Shrinks with card width via container units so long amounts
      (up to ~15 digits) stay within the card. */
   font-size: clamp(18px, 8cqi, 36px);
-  font-weight: 700;
+  font-weight: 900;
   color: #111;
   letter-spacing: -1px;
   line-height: 1;
