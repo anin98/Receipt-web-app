@@ -47,8 +47,8 @@ export default function SuccessReceipt({ data, onNewTransaction, preview }) {
     const text = amountTextRef.current;
     const icon = iconRef.current;
     if (!row || !text) return;
-    const MIN = 18;
-    const MAX = 36;
+    const MIN = 28;
+    const MAX = 48;
     const fit = () => {
       const iconW = icon ? icon.getBoundingClientRect().width : 0;
       const gap = 10;
